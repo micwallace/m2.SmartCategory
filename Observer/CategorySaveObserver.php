@@ -32,6 +32,7 @@ class CategorySaveObserver implements ObserverInterface
                 $rule = $category->getSmartRule();
                 if ($rule) {
                     $rule->setId($category->getId());
+                    $rule->setAttributeValueStore($category->getAttributeValueStore());
                     $rule->save();
                 }
             }

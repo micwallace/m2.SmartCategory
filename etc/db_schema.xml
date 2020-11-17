@@ -19,6 +19,8 @@
                 comment="Rule Id"/>
         <column xsi:type="mediumtext" name="conditions_serialized" nullable="true"
                 comment="Conditions Serialized"/>
+        <column xsi:type="int" name="attribute_value_store" padding="10" unsigned="true" nullable="false" default="0"
+                comment="Attribute Value Store ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="rule_id"/>
         </constraint>
