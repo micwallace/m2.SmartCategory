@@ -229,7 +229,7 @@ class Rule extends AbstractModel implements IdentityInterface
             $this->productIds = [];
             $this->setCollectedAttributes([]);
             /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
-            $productCollection = $this->productCollectionFactory->create();
+            $productCollection = $this->productCollectionFactory->create()->setStoreId($this->getAttributeValueStore());
 
             $this->_eventManager->dispatch(
                 'faonni_smartcategory_product_collection_match_before',

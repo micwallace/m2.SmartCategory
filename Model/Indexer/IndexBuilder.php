@@ -136,7 +136,7 @@ class IndexBuilder
     {
         foreach ($this->getAllRules() as $rule) {
             foreach ($ids as $productId) {
-                $this->applyRule($rule, $this->getProduct($productId));
+                $this->applyRule($rule, $this->getProduct($productId, $rule->getAttributeValueStore()));
                 $this->productCategoryReindexRow($productId);
             }
         }
@@ -341,10 +341,11 @@ class IndexBuilder
      * @param int $productId
      * @return DataObject
      */
-    protected function getProduct($productId)
+    protected function getProduct($productId, $storeId=0)
     {
         if (!isset($this->loadedProducts[$productId])) {
             $this->loadedProducts[$productId] = $this->productFactory->create()
+                ->setStoreId($storeId)
                 ->load($productId);
         }
         return $this->loadedProducts[$productId];
