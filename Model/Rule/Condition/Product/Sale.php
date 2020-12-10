@@ -24,7 +24,7 @@ class Sale extends AbstractCondition
      *
      * @var string
      */
-    protected $_inputType = 'select';
+    protected $_inputType = 'string';
 
     /**
      * Initialize Condition Model
@@ -42,55 +42,16 @@ class Sale extends AbstractCondition
         );
 
         $this->setType(self::class);
-        $this->setValue(0);
     }
 
     /**
-     * Get input type for attribute value
+     * Get attribute element html.
      *
      * @return string
      */
-    public function getValueElementType()
+    public function getAttributeElementHtml()
     {
-        return 'select';
-    }
-
-    /**
-     * Prepare value select options
-     *
-     * @return $this
-     */
-    public function loadValueOptions()
-    {
-        $this->setValueOption([]);
-        return $this;
-    }
-
-    /**
-     * Prepare operator select options
-     *
-     * @return $this
-     */
-    public function loadOperatorOptions()
-    {
-        $this->setOperatorOption([
-            '==' => __('has'),
-            '!=' => __('does not have')
-        ]);
-        return $this;
-    }
-
-    /**
-     * Get HTML of condition string
-     *
-     * @return string
-     */
-    public function asHtml()
-    {
-        return $this->getTypeElementHtml() . __(
-            'Product %1 a Special Price',
-            $this->getOperatorElementHtml()
-        ) . $this->getRemoveLinkHtml();
+        return "Special Price";
     }
 
     /**
@@ -108,12 +69,11 @@ class Sale extends AbstractCondition
             $model->getSpecialToDate()
         );
 
-        if ($this->getOperator() == '==' && $specialPrice && $isDateInterval) {
-            return true;
-        } elseif ($this->getOperator() == '!=' && (!$specialPrice || !$isDateInterval)) {
-            return true;
+        if (!$isDateInterval){
+            return false;
         }
-        return false;
+
+        return parent::validateAttribute($specialPrice);
     }
 
     /**
