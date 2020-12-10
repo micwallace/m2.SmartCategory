@@ -5,6 +5,7 @@
  */
 namespace Faonni\SmartCategory\Model\Rule\Condition\Product;
 
+use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Rule\Model\Condition\AbstractCondition;
 use Magento\Rule\Model\Condition\Context;
@@ -27,19 +28,28 @@ class Sale extends AbstractCondition
     protected $_inputType = 'string';
 
     /**
+     * @var CatalogHelper
+     */
+    private $catalogHelper;
+
+    /**
      * Initialize Condition Model
      *
      * @param Context $context
+     * @param CatalogHelper $catalogHelper
      * @param array $data
      */
     public function __construct(
         Context $context,
+        CatalogHelper $catalogHelper,
         array $data = []
     ) {
         parent::__construct(
             $context,
             $data
         );
+
+        $this->catalogHelper = $catalogHelper;
 
         $this->setType(self::class);
     }
@@ -51,7 +61,7 @@ class Sale extends AbstractCondition
      */
     public function getAttributeElementHtml()
     {
-        return "Special Price";
+        return "Special Price (incl. tax)";
     }
 
     /**
@@ -69,9 +79,19 @@ class Sale extends AbstractCondition
             $model->getSpecialToDate()
         );
 
-        if (!$isDateInterval){
+        if (!$isDateInterval || !$specialPrice){
             return false;
         }
+
+        $specialPrice = $this->catalogHelper->getTaxPrice(
+            $model,
+            $specialPrice,
+            true,
+            null,
+            null,
+            null,
+            $model->getStoreId()
+        );
 
         return parent::validateAttribute($specialPrice);
     }
@@ -87,7 +107,8 @@ class Sale extends AbstractCondition
         $productCollection
             ->addAttributeToSelect('special_price', 'left')
             ->addAttributeToSelect('special_from_date', 'left')
-            ->addAttributeToSelect('special_to_date', 'left');
+            ->addAttributeToSelect('special_to_date', 'left')
+            ->addAttributeToSelect('tax_class_id', 'left');
 
         return $this;
     }
